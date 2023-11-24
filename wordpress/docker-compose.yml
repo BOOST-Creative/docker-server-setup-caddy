@@ -3,7 +3,7 @@ networks:
     external: true
 
 services:
-  CHANGE_TO_SITE_NAME-redis:
+  redis:
     container_name: CHANGE_TO_SITE_NAME-redis
     image: redis:7-alpine
     restart: unless-stopped
@@ -13,12 +13,16 @@ services:
     networks:
       - CHANGE_TO_USERNAME
 
-  CHANGE_TO_SITE_NAME:
+  wordpress:
     container_name: CHANGE_TO_SITE_NAME
     image: ghcr.io/boost-creative/docker-wordpress-8:latest
+    labels:
+      caddy: CHANGE_TO_SITE_NAME.boost
+      caddy.reverse_proxy: '{{upstreams 80}}'
+      caddy.tls: internal
     volumes:
       - ./wordpress:/usr/src/wordpress
-      - ./.htninja:/usr/src/.htninja
+      # - ./.htninja:/usr/src/.htninja
       - /home/CHANGE_TO_USERNAME/server/wp-fail2ban.log:/var/log/messages
     restart: unless-stopped
     networks:
