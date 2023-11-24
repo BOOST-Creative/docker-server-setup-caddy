@@ -27,7 +27,7 @@ do
           break;;
         "Create Site")
           echo -e "\e[36mCreating site...\e[0m"
-          curl -s https://raw.githubusercontent.com/BOOST-Creative/docker-server-setup/main/newsite.sh > ~/.newsite.sh && chmod +x ~/.newsite.sh && ~/.newsite.sh
+          curl -s https://raw.githubusercontent.com/BOOST-Creative/docker-server-setup-caddy/main/newsite.sh > ~/.newsite.sh && chmod +x ~/.newsite.sh && ~/.newsite.sh
           break;;
         "Delete Site & Files")
           echo -e "\e[36mDeleting site (seriously, this will completely delete everything)...\e[0m"
@@ -77,6 +77,22 @@ do
           break;;
         "MariaDB Upgrade")
           docker exec mariadb sh -c 'mysql_upgrade -uroot -p"$MYSQL_ROOT_PASSWORD"'
+          break;;
+        "Change Site Domain")
+          read -r -p "Enter site name or abbreviation (no spaces): " sitename
+          echo -e "\e[36mCurrent domain(s): ${yq '.services.wordpress.labels.caddy' "/home/$CUR_USER/sites/$sitename/docker-compose.yml"}\e[0m"
+          # change domain
+          read -r -p "Enter new domain(s) (separate w/ spaces): " newdomain
+          yq -i '.services.wordpress.labels.caddy = env(newdomain)' "/home/$CUR_USER/sites/$sitename/docker-compose.yml"
+          # set or delete insecure tls
+          read -r -p "Self signed certificate (y/n)? " insecuretls
+          if [[ $insecuretls =~ ^[Yy]$ ]]; then
+            yq -i '.services.wordpress.labels."caddy.tls" = "internal"' "/home/$CUR_USER/sites/$sitename/docker-compose.yml"
+          else
+            yq -i 'del(.services.wordpress.labels."caddy.tls")' "/home/$CUR_USER/sites/$sitename/docker-compose.yml"
+          fi
+          docker compose -f "/home/$CUR_USER/sites/$sitename/docker-compose.yml" up -d
+          echo -e "\e[32mDomain updated 👍\e[0m"
           break;;
         "Quit")
           echo "Goodbye 👍"
