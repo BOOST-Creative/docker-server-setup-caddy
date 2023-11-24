@@ -8,19 +8,6 @@ volumes:
   mariadb:
 
 services:
-  portainer:
-    image: portainer/portainer-ce:latest
-    container_name: portainer
-    restart: unless-stopped
-    networks:
-      - CHANGE_TO_USERNAME
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ./portainer:/data
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    ports:
-      - 127.0.0.1:6900:9000
-
   mariadb:
     image: linuxserver/mariadb
     container_name: mariadb

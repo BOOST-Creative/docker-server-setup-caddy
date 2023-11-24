@@ -26,8 +26,6 @@ curl -s https://raw.githubusercontent.com/BOOST-Creative/docker-server-setup/mai
 
 Besides Nginx Proxy Manager, all services are tunneled through SSH and not publicly accessible. The following are installed by default:
 
-- **[Portainer](https://github.com/portainer/portainer)** and **[ctop](https://github.com/bcicen/ctop)** for easy container management with GUI and terminal.
-
 - **[Nginx Proxy Manager](https://github.com/NginxProxyManager/nginx-proxy-manager)** for publicly exposing your services with automatic SSL.
 
 - **[Fail2ban](https://github.com/crazy-max/docker-fail2ban)** configured to read Nginx Proxy Manager logs and block malicious IPs in iptables.
