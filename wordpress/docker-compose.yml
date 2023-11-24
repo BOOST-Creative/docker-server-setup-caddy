@@ -28,7 +28,7 @@ services:
     networks:
       - CHANGE_TO_USERNAME
     depends_on:
-      - CHANGE_TO_SITE_NAME-redis
+      - redis
     environment:
       # TZ: 'CHANGE_TO_TZ'
       REDIS_HOST: CHANGE_TO_SITE_NAME-redis
