@@ -8,6 +8,20 @@ volumes:
   mariadb:
 
 services:
+  caddy:
+    image: lucaslorentz/caddy-docker-proxy:ci-alpine
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      - CADDY_INGRESS_NETWORKS=CHANGE_TO_USERNAME
+    networks:
+      - CHANGE_TO_USERNAME
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./caddy:/data
+    restart: unless-stopped
+
   mariadb:
     image: linuxserver/mariadb
     container_name: mariadb
@@ -22,10 +36,6 @@ services:
       PGID: USER_GID
       MYSQL_ROOT_PASSWORD: 'MARIA_DB_ROOT_PASSWORD'
       TZ: USER_TIMEZONE
-      # nginx proxy database
-      MYSQL_USER: 'npm'
-      MYSQL_PASSWORD: 'NPM_DB_PASSWORD'
-      MYSQL_DATABASE: npm
       MARIADB_AUTO_UPGRADE: 'true'
 
   phpmyadmin:
@@ -43,27 +53,6 @@ services:
     ports:
       - 127.0.0.1:6902:80
     restart: unless-stopped
-
-  nginx-proxy-manager:
-    image: 'jc21/nginx-proxy-manager:latest'
-    container_name: nginx-proxy-manager
-    restart: unless-stopped
-    networks:
-      - CHANGE_TO_USERNAME
-    ports:
-      - '80:80' # Public HTTP Port
-      - '443:443' # Public HTTPS Port
-      - '127.0.0.1:6901:81' # Admin Web Port
-    environment:
-      DB_MYSQL_HOST: 'mariadb'
-      DB_MYSQL_PORT: 3306
-      DB_MYSQL_USER: 'npm'
-      DB_MYSQL_PASSWORD: 'NPM_DB_PASSWORD'
-      DB_MYSQL_NAME: 'npm'
-      TZ: USER_TIMEZONE
-    volumes:
-      - ./npm/data:/data
-      - ./npm/letsencrypt:/etc/letsencrypt
 
   filebrowser:
     image: hurlenko/filebrowser
