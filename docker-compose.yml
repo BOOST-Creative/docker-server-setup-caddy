@@ -9,6 +9,7 @@ volumes:
 
 services:
   caddy:
+    container_name: caddy
     image: lucaslorentz/caddy-docker-proxy:ci-alpine
     ports:
       - 80:80
