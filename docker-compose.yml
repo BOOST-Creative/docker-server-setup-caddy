@@ -15,6 +15,7 @@ services:
       - 443:443
     environment:
       - CADDY_INGRESS_NETWORKS=CHANGE_TO_USERNAME
+      - CADDY_DOCKER_EVENT_THROTTLE_INTERVAL=2s
     networks:
       - CHANGE_TO_USERNAME
     volumes:
