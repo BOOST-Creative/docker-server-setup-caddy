@@ -4,7 +4,7 @@ CUR_USER="$(whoami)"
 
 PS3="Choose action: "
 
-select action in "Start site" "Stop Site" "Create Site" "Delete Site & Files" "Restart Site" "Fix Permissions" "Add SSH Key" "Container Shell" "Fail2ban Status" "Unban IP" "Whitelist IP" "Prune Docker Images" "MariaDB Upgrade" "Quit"
+select action in "Start site" "Stop Site" "Create Site" "Delete Site & Files" "Restart Site" "Fix Permissions" "Add SSH Key" "Container Shell" "Fail2ban Status" "Unban IP" "Whitelist IP" "Prune Docker Images" "MariaDB Upgrade" "Change Site Domain" "Quit"
 do
     case $action in
         "Start site")
