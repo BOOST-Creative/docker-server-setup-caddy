@@ -15,6 +15,7 @@ REPO="BOOST-Creative/docker-server-setup"
 CUR_TIMEZONE=$(timedatectl show | grep zone | sed 's/Timezone=//g');
 MARIA_DB_ROOT_PASSWORD=$(< /dev/urandom tr -dc A-Z-a-z-0-9 | head -c"${1:-20}" | sed 's/-/_/g')
 KOPIA_PASSWORD=$(< /dev/urandom tr -dc A-Z-a-z-0-9 | head -c"${1:-10}")
+ARCHITECTURE=$(dpkg --print-architecture)
 
 # intro message
 echo -e "${GREEN}Welcome! This script should be run as the root user on a new Debian or Ubuntu server.${ENDCOLOR}\n"
@@ -72,6 +73,11 @@ echo -e "${CYAN}Updating system & packages...${ENDCOLOR}"
 # kopia
 curl -s https://kopia.io/signing-key | gpg --dearmor -o /usr/share/keyrings/kopia-keyring.gpg
 echo "deb [signed-by=/usr/share/keyrings/kopia-keyring.gpg] http://packages.kopia.io/apt/ stable main" | tee /etc/apt/sources.list.d/kopia.list
+
+# yq for editing yml files
+wget https://github.com/mikefarah/yq/releases/download/v4.40.3/yq_linux_${ARCHITECTURE}.tar.gz -O - |\
+  tar xz && mv yq_linux_${ARCHITECTURE} /usr/bin/yq
+
 
 # install docker
 curl -fsSL https://get.docker.com -o /tmp/get-docker.sh
