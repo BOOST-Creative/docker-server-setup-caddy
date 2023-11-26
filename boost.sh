@@ -4,7 +4,7 @@ CUR_USER="$(whoami)"
 
 PS3="Choose action: "
 
-select action in "Start site" "Stop Site" "Create Site" "Delete Site & Files" "Restart Site" "Fix Permissions" "Add SSH Key" "Container Shell" "Fail2ban Status" "Unban IP" "Whitelist IP" "Prune Docker Images" "MariaDB Upgrade" "Change Site Domain" "Quit"
+select action in "Start site" "Stop Site" "Create Site" "Delete Site & Files" "Restart Site" "Fix Permissions" "Add SSH Key" "Container Shell" "Fail2ban Status" "Unban IP" "Whitelist IP" "Prune Docker Images" "MariaDB Upgrade" "Change Site Domain" "DB Search Replace" "Quit"
 do
     case $action in
         "Start site")
@@ -93,6 +93,12 @@ do
           fi
           docker compose -f "/home/$CUR_USER/sites/$sitename/docker-compose.yml" restart
           echo -e "\e[32mDomain updated 👍\e[0m"
+          break;;
+        "DB Search Replace")
+          read -r -p "Enter site name or abbreviation (no spaces): " sitename
+          read -r -p "Enter search string: " searchstring
+          read -r -p "Enter replace string: " replacestring
+          docker exec "$sitename" sh -c "cd /usr/src/wordpress && wp search-replace '$searchstring' '$replacestring' --all-tables"
           break;;
         "Quit")
           echo "Goodbye 👍"
