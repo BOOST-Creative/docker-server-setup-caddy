@@ -27,7 +27,7 @@ ignoreip = 127.0.0.1/8 192.168.1.0/24 172.16.0.0/12
 
 [npm-docker]
 # IPs that trigger too many 403 or 404
-enabled = true
+enabled = false
 action = npm-firewall-block
 filter = npm-docker
 logpath = /var/log/npm/proxy-host-*_access.log
