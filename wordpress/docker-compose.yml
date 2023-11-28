@@ -19,6 +19,8 @@ services:
     labels:
       caddy: CHANGE_TO_SITE_NAME.boost
       caddy.reverse_proxy: '{{upstreams 80}}'
+      caddy.log.output: file /var/log/caddy.log
+      caddy.log.level: error
       caddy.tls: internal
     volumes:
       - ./wordpress:/usr/src/wordpress

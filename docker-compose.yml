@@ -22,6 +22,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./caddy:/data
+      - /home/CHANGE_TO_USERNAME/server/caddy.log:/var/log/caddy.log
     restart: unless-stopped
 
   mariadb:
@@ -110,3 +111,4 @@ services:
       - ./fail2ban/data:/data
       - ./npm/data/logs:/var/log/npm
       - /home/CHANGE_TO_USERNAME/server/wp-fail2ban.log:/var/log/wp-fail2ban.log
+      - /home/CHANGE_TO_USERNAME/server/caddy.log:/var/log/caddy.log

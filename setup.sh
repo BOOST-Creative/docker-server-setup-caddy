@@ -109,6 +109,7 @@ docker network create database
 
 # make file for wp-fail2ban logs
 touch "/home/$username/server/wp-fail2ban.log"
+touch "/home/$username/server/caddy.log"
 # rotate wp-fail2ban logs using logrotate
 cp /tmp/docker-server/wordpress/wp-fail2ban.conf /etc/logrotate.d/wp-fail2ban.conf
 sed -i "s/USERNAME/$username/" /etc/logrotate.d/wp-fail2ban.conf
