@@ -99,6 +99,7 @@ rm -r /tmp/docker-server ||:
 git clone --depth=1 "https://github.com/$REPO.git" /tmp/docker-server
 mkdir -p /home/"$username"/server/fail2ban /home/"$username"/server/backups /home/"$username"/sites
 cp -r /tmp/docker-server/fail2ban /home/"$username"/server/fail2ban/data
+cp -r /tmp/docker-server/mariadb /home/"$username"/server/mariadb
 cp /tmp/docker-server/docker-compose.yml /home/"$username"/server/docker-compose.yml
 cp /tmp/docker-server/firewall.sh /home/"$username"/firewall.sh
 sed -i "s/REPLACE_ME/$ssh_port/" "/home/$username/firewall.sh"

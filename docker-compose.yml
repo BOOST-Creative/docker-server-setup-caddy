@@ -34,6 +34,7 @@ services:
       - database
     volumes:
       - mariadb:/config
+      - /home/CHANGE_TO_USERNAME/server/mariadb/custom.cnf:/config/custom.cnf
     environment:
       PUID: USER_UID
       PGID: USER_GID
