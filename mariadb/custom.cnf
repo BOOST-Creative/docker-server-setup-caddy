@@ -164,6 +164,9 @@ innodb_flush_method     = O_DIRECT
 # ssl-cert=/etc/mysql/server-cert.pem
 # ssl-key=/etc/mysql/server-key.pem
 
+# [mysqld] custom
+skip-log-bin = true
+
 [mysqldump]
 quick
 quote-names
