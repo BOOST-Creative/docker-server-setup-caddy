@@ -91,7 +91,7 @@ do
           else
             yq -i 'del(.services.wordpress.labels."caddy.tls")' "/home/$CUR_USER/sites/$sitename/docker-compose.yml"
           fi
-          docker compose -f "/home/$CUR_USER/sites/$sitename/docker-compose.yml" restart
+          docker compose -f "/home/$CUR_USER/sites/$sitename/docker-compose.yml" up -d
           echo -e "\e[32mDomain updated 👍\e[0m"
           break;;
         "DB Search Replace")
