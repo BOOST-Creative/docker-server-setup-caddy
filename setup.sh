@@ -157,6 +157,9 @@ systemctl enable reloadFail2ban.timer > /dev/null 2>&1
 # systemd timer to backup mariadb every day at 2am
 systemctl start mariadbBackup.timer
 systemctl enable mariadbBackup.timer > /dev/null 2>&1
+# systemd timer to optimize images every day at 12:30am
+systemctl start optimize_images.timer
+systemctl enable optimize_images.timer > /dev/null 2>&1
 # kopia server
 systemctl start kopiaServer.service
 systemctl enable kopiaServer.service > /dev/null 2>&1
