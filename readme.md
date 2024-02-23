@@ -1,6 +1,6 @@
 ## BOOST setup script for Debian / Ubuntu servers
 
-Run as root on a fresh installation. This is a specific setup for our org. If you want a neutral setup, check [henrygd/docker-server-setup](https://github.com/henrygd/docker-server-setup).
+Run as root on a fresh installation. This is a specific setup for our org.
 
 ```bash
 curl -s https://raw.githubusercontent.com/BOOST-Creative/docker-server-setup-caddy/main/setup.sh > setup.sh && chmod +x ./setup.sh && ./setup.sh
@@ -16,7 +16,7 @@ curl -s https://raw.githubusercontent.com/BOOST-Creative/docker-server-setup-cad
 
 - Configures firewall to block ingress except on ports 80, 443, and your chosen SSH port.
 
-- Fail2ban working out of the box to block malicious bot traffic to public web applications.
+- Fail2ban working out of the box to block malicious bot traffic to public web applications[^f2b].
 
 - Ensures the server is set to your preferred time zone.
 
@@ -24,13 +24,13 @@ curl -s https://raw.githubusercontent.com/BOOST-Creative/docker-server-setup-cad
 
 ### Installs docker, docker compose, and selected services
 
-Besides Nginx Proxy Manager, all services are tunneled through SSH and not publicly accessible. The following are installed by default:
+Besides Caddy, all services are tunneled through SSH and not publicly accessible. The following are installed by default:
 
-- **[Nginx Proxy Manager](https://github.com/NginxProxyManager/nginx-proxy-manager)** for publicly exposing your services with automatic SSL.
+- **[Caddy Docker Proxy](https://github.com/lucaslorentz/caddy-docker-proxy)** for publicly exposing services with automatic SSL.
 
-- **[Fail2ban](https://github.com/crazy-max/docker-fail2ban)** configured to read Nginx Proxy Manager logs and block malicious IPs in iptables.
+- **[Fail2ban](https://github.com/crazy-max/docker-fail2ban)** needs to be updated to work w/ caddy logs but will work w/ wp-fail2ban.
 
-- **[MariaDB database](https://hub.docker.com/r/linuxserver/mariadb)** used by Nginx Proxy Manager and any other apps you want.
+- **[MariaDB database](https://hub.docker.com/r/linuxserver/mariadb)** for storing data.
 
 - **[phpMyAdmin](https://hub.docker.com/r/linuxserver/phpmyadmin)** for graphical administration of the MariaDB database.
 
@@ -44,9 +44,15 @@ Besides Nginx Proxy Manager, all services are tunneled through SSH and not publi
 
 These are defined and can be disabled in `~/server/docker-compose.yml`. (Except the Kopia server which is a systemd service.)
 
+## boost command
+
+The command `boost` runs a [helper script](https://github.com/BOOST-Creative/boost-server-cli) that automates a lot of repetitive tasks.
+
+![CLI example gif](https://raw.githubusercontent.com/BOOST-Creative/boost-server-cli/main/assets/example.gif)
+
 ## Notes
 
-There is a docker network with the same name as your username. If you create new containers in that that network, you can use the container name as a hostname in Nginx Proxy Manager.
+There is a docker network with the same name as your username. If you create new containers in that that network, you can use caddy as a reverse proxy.
 
 If you need to open a port for Wireguard or another service, [allow the port in iptables](https://www.digitalocean.com/community/tutorials/iptables-essentials-common-firewall-rules-and-commands) and run `sudo netfilter-persistent save` to save rules.
 
@@ -54,25 +60,7 @@ Individual MariaDB databases are automatically saved to disk each day for backup
 
 To remove access for an SSH key, edit `~/.ssh/authorized_keys` and remove the line containing the key.
 
-If you want to monitor uptime, check out **[Uptime Kuma](https://github.com/louislam/uptime-kuma)**, but you should run this from a different machine.
-
 If you're running wordpress sites created via the `boost` command, wp-fail2ban events are logged to `~/server/wp-fail2ban.log`. This file is automatically monitored by the fail2ban container, and you can use it to review security related events. For example, use `grep "Accepted" ~/server/wp-fail2ban.log` to view succesful logins if you want to whitelist IPs. The timestamps in this file are unfortunately locked to GMT. If you know how to change the timezone for syslog in Alpine Linux, let me know.
-
-## boost command
-
-The command `boost` runs a helper script that allows you to do the following:
-
-- Start site
-- Stop site
-- Create wordpress site + database
-- Delete site / files
-- Restart site
-- Fix permissions for created wordpress site
-- Add SSH key
-- Start container shell session
-- View status of all Fail2ban jails
-- Unban IP in Fail2ban jail
-- Permanently whitelist IP in Fail2ban
 
 ## Working with Fail2ban
 
@@ -92,18 +80,10 @@ docker exec fail2ban sh -c "fail2ban-client set npm-docker unbanip --all"
 
 You can view / search / download container logs with **[Dozzle](http://localhost:6905)**. For wordpress containers, this will show both nginx and php-fpm output.
 
-Nginx Proxy Manager logs are located in `~/server/npm/data/logs/`. You need the ID of the proxy host you want to view, which you can find by clicking the three dots in NPM. These logs are limited to web requests and are rotated weekly.
+## Cloudflare
 
-Example command to view live log: `tail -f ~/server/npm/data/logs/proxy-host-1_access.log`
+Don't proxy through cloudflare if you're using wp-fail2ban. It will ban the proxy servers and screw things up.
 
-Example command search log for IP: `grep "0.0.0.0" ~/server/npm/data/logs/proxy-host-1_access.log`
+Either don't proxy through cloudflare and use wp-fail2ban, or proxy through cloudflare and use [solid security](https://wordpress.org/plugins/better-wp-security/).
 
-## Using with Cloudflare
-
-If you proxy traffic through Cloudflare and want to use Fail2ban, additional configuration is required to avoid banning Cloudflare IPs. Please reference the guides below.
-
-Fail2ban configuration is located in `~/server/fail2ban`.
-
-- https://www.youtube.com/watch?v=Ha8NIAOsNvo (and [companion article](https://dbt3ch.com/books/fail2ban/page/how-to-install-and-configure-Fail2ban-to-work-with-nginx-proxy-manager) by DB Tech)
-
-- https://blog.lrvt.de/fail2ban-with-nginx-proxy-manager/
+[^f2b]: This needs to be updated to work with caddy error logs. It will work ootb with our wordpress setup if wp-fail2ban is installed and the connection isn't proxied through cloudflare.
