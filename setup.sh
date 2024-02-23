@@ -75,7 +75,7 @@ curl -s https://kopia.io/signing-key | gpg --dearmor -o /usr/share/keyrings/kopi
 echo "deb [signed-by=/usr/share/keyrings/kopia-keyring.gpg] http://packages.kopia.io/apt/ stable main" | tee /etc/apt/sources.list.d/kopia.list
 
 # yq for editing yml files
-wget https://github.com/mikefarah/yq/releases/download/v4.40.3/yq_linux_${ARCHITECTURE}.tar.gz -O - |\
+wget https://github.com/mikefarah/yq/releases/download/v4.41.1/yq_linux_${ARCHITECTURE}.tar.gz -O - |\
   tar xz && mv yq_linux_${ARCHITECTURE} /usr/bin/yq
 
 
@@ -177,6 +177,12 @@ echo -e "\n${CYAN}Updating SSH config...${ENDCOLOR}"
 echo -e "${CYAN}Restarting SSH daemon...${ENDCOLOR}\n"
 systemctl restart sshd
 
+# add boost cli
+mkdir "/home/$username/.boost-bin";
+wget -O "/home/$username/.boost-bin/boost.tar.gz" "https://github.com/BOOST-Creative/boost-server-cli/releases/download/v0.0.5/boost-server-cli_0.0.5_linux_$ARCHITECTURE.tar.gz";
+tar -zxvf "/home/$username/.boost-bin/boost.tar.gz" -C "/home/$username/.boost-bin" boost;
+rm "/home/$username/.boost-bin/boost.tar.gz";
+
 # verify ssh key is correct
 cat /home/"$username"/.ssh/authorized_keys
 read -r -p "$(echo -e "\nIs the above SSH key(s) correct (y/n)? ")" ssh_correct
@@ -193,10 +199,10 @@ done
   echo 'alias dcd="docker compose down"';
   echo 'alias dcu="docker compose up -d"';
   echo 'alias dcr="docker compose restart"';
-  echo 'alias boost="curl -s https://raw.githubusercontent.com/BOOST-Creative/docker-server-setup-caddy/main/boost.sh > ~/.boost.sh && chmod +x ~/.boost.sh && ~/.boost.sh"';
   echo 'alias ctop="docker run --rm -ti --volume /var/run/docker.sock:/var/run/docker.sock:ro quay.io/vektorlab/ctop:latest"';
   echo 'echo -e "\nphpMyAdmin: \e[34mhttp://localhost:6902\n\e[0mFile Browser: \e[34mhttp://localhost:6903\n\e[0mKopia: \e[34mhttp://localhost:6904\e[0m (kopia:'"$KOPIA_PASSWORD"')\nDozzle: \e[34mhttp://localhost:6905\n\n\e[0mRun ctop to manage containers and view metrics.\n"';
   echo 'type ~/firewall.sh &>/dev/null && ./firewall.sh';
+  echo 'export PATH="~/.boost-bin:$PATH"';
 } >> "/home/$username/.bashrc"
 
 # Success Message
