@@ -182,6 +182,7 @@ mkdir "/home/$username/.boost-bin";
 wget -O "/home/$username/.boost-bin/boost.tar.gz" "https://github.com/BOOST-Creative/boost-server-cli/releases/download/v0.0.5/boost-server-cli_0.0.5_linux_$ARCHITECTURE.tar.gz";
 tar -zxvf "/home/$username/.boost-bin/boost.tar.gz" -C "/home/$username/.boost-bin" boost;
 rm "/home/$username/.boost-bin/boost.tar.gz";
+chown -R "$username:" "/home/"$username"/.boost-bin"
 
 # verify ssh key is correct
 cat /home/"$username"/.ssh/authorized_keys
