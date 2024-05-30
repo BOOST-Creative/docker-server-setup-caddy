@@ -6,6 +6,10 @@ Run as root on a fresh installation. This is a specific setup for our org.
 curl -s https://raw.githubusercontent.com/BOOST-Creative/docker-server-setup-caddy/main/setup.sh > setup.sh && chmod +x ./setup.sh && ./setup.sh
 ```
 
+> [!IMPORTANT]
+> fail2ban is disabled on this setup until we have time to work on normalizing proxied (ie cloudflare) and non-proxied IPs in caddy / fail2ban / iptables. We can't always control what clients are doing with their DNS. Recommended to use [solid security](https://wordpress.org/plugins/better-wp-security/) + [cloudflare turnstile](https://wordpress.org/plugins/simple-cloudflare-turnstile/) on wordpress and handle security for other services as needed (authelia, cloudflare waf and bot fight, etc).
+
+
 ### Hardens and configures system
 
 - Creates non-root user with sudo and docker privileges.
@@ -16,7 +20,7 @@ curl -s https://raw.githubusercontent.com/BOOST-Creative/docker-server-setup-cad
 
 - Configures firewall to block ingress except on ports 80, 443, and your chosen SSH port.
 
-- Fail2ban working out of the box to block malicious bot traffic to public web applications[^f2b].
+- Fail2ban working out of the box to block malicious bot traffic to public web applications.
 
 - Ensures the server is set to your preferred time zone.
 
@@ -85,5 +89,3 @@ You can view / search / download container logs with **[Dozzle](http://localhost
 Don't proxy through cloudflare if you're using wp-fail2ban. It will ban the proxy servers and screw things up.
 
 Either don't proxy through cloudflare and use wp-fail2ban, or proxy through cloudflare and use [solid security](https://wordpress.org/plugins/better-wp-security/).
-
-[^f2b]: This needs to be updated to work with caddy error logs. It will work ootb with our wordpress setup if wp-fail2ban is installed and the connection isn't proxied through cloudflare.
