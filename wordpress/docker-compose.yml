@@ -3,40 +3,28 @@ networks:
     external: true
 
 services:
-  redis:
-    container_name: CHANGE_TO_SITE_NAME-redis
-    image: redis:7-alpine
-    restart: unless-stopped
-    command: redis-server /usr/local/etc/redis/redis.conf
-    volumes:
-      - ./redis.conf:/usr/local/etc/redis/redis.conf
-    networks:
-      - CHANGE_TO_USERNAME
-
   wordpress:
     container_name: CHANGE_TO_SITE_NAME
     image: ghcr.io/boost-creative/docker-wordpress-8:latest
     labels:
       caddy: CHANGE_TO_SITE_NAME.boost
-      caddy.reverse_proxy: '{{upstreams 80}}'
+      caddy.reverse_proxy: "{{upstreams 80}}"
       caddy.tls: internal
       # caddy.log.output: file /var/log/caddy.log
       # caddy.log.level: error
     volumes:
       - ./wordpress:/usr/src/wordpress
-      - ./.htninja:/usr/src/.htninja
+      # - ./.htninja:/usr/src/.htninja
       # - /home/CHANGE_TO_USERNAME/server/wp-fail2ban.log:/var/log/messages
     restart: unless-stopped
     networks:
       - CHANGE_TO_USERNAME
-    depends_on:
-      - redis
     environment:
-      # TZ: 'CHANGE_TO_TZ'
-      REDIS_HOST: CHANGE_TO_SITE_NAME-redis
+      TZ: "America/New_York"
+      # REDIS_HOST: CHANGE_TO_SITE_NAME-redis
       # installs recommended plugins (see readme)
       ADDITIONAL_PLUGINS:
-        'w3-total-cache better-wp-security simple-cloudflare-turnstile'
+        "w3-total-cache better-wp-security"
         # cron jobs to run from within container (separate lines with \n)
       #CRON: "* * * * * touch hello-world \n
       #  0 * * * * curl http://127.0.0.1/webhook &>/dev/null"
